@@ -58,12 +58,7 @@ const ContactForm = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Clear individual field error if it exists
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
-    }
-
-    // Clear general error if exists
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
     if (generalError) setGeneralError('');
   };
 
@@ -71,7 +66,6 @@ const ContactForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate before submitting
     if (!validateForm()) return;
 
     try {
@@ -93,7 +87,6 @@ const ContactForm = () => {
         setFormData({ name: '', email: '', phone: '', message: '' });
         setErrors({});
       } else {
-        console.error('❌ Error submitting form:', response.status);
         setGeneralError('Something went wrong. Try again later.');
       }
     } catch (err) {
