@@ -1,0 +1,68 @@
+
+.header {
+    background: url('/bg-vfilms.jpg') center/cover no-repeat fixed;
+  /* background: linear-gradient(to right, #f5ede3 0%, #faf6f0 100%); */
+  padding: 20px 40px;
+  border-bottom: 3px solid #e67e50;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.header-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 28px;
+  letter-spacing: 1px;
+}
+
+.logo-v {
+  color: #e67e50;
+  font-style: italic;
+  font-weight: 900;
+  font-size: 32px;
+}
+
+.logo-text {
+  color: #2c2c2c;
+  font-family: 'Georgia', serif;
+}
+
+.nav-menu {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 28px;
+  color: #2c2c2c;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 15px 20px;
+  }
+
+  .header-container {
+    flex-wrap: wrap;
+  }
+
+  .nav-menu {
+    display: block;
+  }
+
+  .logo {
+    font-size: 24px;
+  }
+
+  .logo-v {
+    font-size: 28px;
+  }
+}
