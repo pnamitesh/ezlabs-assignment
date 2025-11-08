@@ -9,25 +9,16 @@ const ContactForm = () => {
     message: ''
   });
 
-  // const [errors, setErrors] = useState({});
-  // const [loading, setLoading] = useState(false);
-  // const [successMessage, setSuccessMessage] = useState('');
-  // const [generalError, setGeneralError] = useState('');
-  // const [error, setError] = useState('');
-  // const [success, setSuccess] = useState('');
-  // const formRef = useRef(null);
-
   const [errors, setErrors] = useState({});
-const [loading, setLoading] = useState(false);
-const [successMessage, setSuccessMessage] = useState('');
-const [generalError, setGeneralError] = useState('');
-const formRef = useRef(null);
-
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [generalError, setGeneralError] = useState('');
+  const formRef = useRef(null);
 
   // Email validation
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  // Phone validation
+  // Phone validation (at least 10 digits)
   const validatePhone = (phone) => /^\d{10,}$/.test(phone.replace(/\D/g, ''));
 
   // Validate form
@@ -65,18 +56,14 @@ const formRef = useRef(null);
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
 
+    // Clear individual field error if it exists
     if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: '',
-      }));
+      setErrors((prev) => ({ ...prev, [name]: '' }));
     }
 
+    // Clear general error if exists
     if (generalError) setGeneralError('');
   };
 
@@ -84,34 +71,34 @@ const formRef = useRef(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.email || !formData.message) {
-      setError("All fields are required.");
-      return;
-    }
+    // Validate before submitting
+    if (!validateForm()) return;
 
     try {
       setLoading(true);
-      const response = await fetch("https://vernanbackend.ezlab.in/api/contact-us/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      setGeneralError('');
+      setSuccessMessage('');
+
+      const response = await fetch('https://vernanbackend.ezlab.in/api/contact-us/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log("✅ Form submitted:", data);
-        setSuccess("Form Submitted!");
-        setSuccessMessage("Form Submitted Successfully!");
-        setFormData({ name: "", email: "", phone: "", message: "" });
+        console.log('✅ Form submitted:', data);
+
+        setSuccessMessage('Form Submitted Successfully!');
+        setFormData({ name: '', email: '', phone: '', message: '' });
+        setErrors({});
       } else {
-        console.error("❌ Error submitting form:", response.status);
-        setError("Something went wrong. Try again later.");
+        console.error('❌ Error submitting form:', response.status);
+        setGeneralError('Something went wrong. Try again later.');
       }
     } catch (err) {
-      console.error("🚨 Network error:", err);
-      setError("Network error. Please check your connection.");
+      console.error('🚨 Network error:', err);
+      setGeneralError('Network error. Please check your connection.');
     } finally {
       setLoading(false);
     }
