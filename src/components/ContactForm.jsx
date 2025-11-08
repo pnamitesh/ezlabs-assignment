@@ -9,13 +9,20 @@ const ContactForm = () => {
     message: ''
   });
 
+  // const [errors, setErrors] = useState({});
+  // const [loading, setLoading] = useState(false);
+  // const [successMessage, setSuccessMessage] = useState('');
+  // const [generalError, setGeneralError] = useState('');
+  // const [error, setError] = useState('');
+  // const [success, setSuccess] = useState('');
+  // const formRef = useRef(null);
+
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
-  const [generalError, setGeneralError] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const formRef = useRef(null);
+const [loading, setLoading] = useState(false);
+const [successMessage, setSuccessMessage] = useState('');
+const [generalError, setGeneralError] = useState('');
+const formRef = useRef(null);
+
 
   // Email validation
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
