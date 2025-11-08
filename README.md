@@ -27,7 +27,7 @@ A responsive single-page React app built for the **EZ Labs Internship Task**.
 ![Home Page](screenshots/Screenshot%20(780).png) -->
 
 📬 Contact Form  
-![Contact Form](screenshots/Screenshot%20(781).png)
+![Contact Form](screenshots/Screenshot%20(780).png)
 
 📱 Submission  
 ![Submission](screenshots/Screenshot%20(782).png)
