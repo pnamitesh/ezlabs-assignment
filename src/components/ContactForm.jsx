@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import '../styles/ContactForm.css';
 
@@ -14,19 +13,15 @@ const ContactForm = () => {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [generalError, setGeneralError] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const formRef = useRef(null);
 
   // Email validation
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   // Phone validation
-  const validatePhone = (phone) => {
-    const phoneRegex = /^\d{10,}$/;
-    return phoneRegex.test(phone.replace(/\D/g, ''));
-  };
+  const validatePhone = (phone) => /^\d{10,}$/.test(phone.replace(/\D/g, ''));
 
   // Validate form
   const validateForm = () => {
@@ -63,75 +58,53 @@ const ContactForm = () => {
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
 
-    // Clear error for this field
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: '',
       }));
     }
 
-    if (generalError) {
-      setGeneralError('');
-    }
+    if (generalError) setGeneralError('');
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
+    if (!formData.name || !formData.email || !formData.message) {
+      setError("All fields are required.");
       return;
     }
 
-    setLoading(true);
-    setGeneralError('');
-    setSuccessMessage('');
-
     try {
-      const response = await fetch('https://vernanbackend.ezlab.in/api/contact-us/', {
-        method: 'POST',
+      setLoading(true);
+      const response = await fetch("https://vernanbackend.ezlab.in/api/contact-us/", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          phone: formData.phone.trim(),
-          message: formData.message.trim()
-        })
+        body: JSON.stringify(formData),
       });
 
-      if (response.status === 200 || response.ok) {
-        setSuccessMessage('Form Submitted');
-        
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          message: ''
-        });
-        setErrors({});
-
-        // Clear success message after 5 seconds
-        setTimeout(() => {
-          setSuccessMessage('');
-        }, 5000);
+      if (response.ok) {
+        const data = await response.json();
+        console.log("✅ Form submitted:", data);
+        setSuccess("Form Submitted!");
+        setSuccessMessage("Form Submitted Successfully!");
+        setFormData({ name: "", email: "", phone: "", message: "" });
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        setGeneralError(
-          errorData.message || 
-          `Error: ${response.status} - ${response.statusText}`
-        );
+        console.error("❌ Error submitting form:", response.status);
+        setError("Something went wrong. Try again later.");
       }
-    } catch (error) {
-      console.error('Submission error:', error);
-      setGeneralError('Network error. Please check your connection and try again.');
+    } catch (err) {
+      console.error("🚨 Network error:", err);
+      setError("Network error. Please check your connection.");
     } finally {
       setLoading(false);
     }
@@ -140,17 +113,14 @@ const ContactForm = () => {
   return (
     <section className="contact-section">
       <div className="contact-container">
-        {/* Left Side - Information */}
         <div className="contact-info">
           <div className="info-content">
-            {/* <h3 className="info-title">Alok kumar Dwivedi</h3> */}
             <p className="info-text">
               Whether you have an idea, a question, or simply want to explore how V can work for you, just a message away. Let's catch up over coffee. Great stories always begin with a good conversation.
             </p>
           </div>
         </div>
 
-        {/* Right Side - Form */}
         <div className="contact-form-wrapper">
           <div className="form-box">
             <div className="form-header">
@@ -158,20 +128,10 @@ const ContactForm = () => {
               <p className="form-subtitle">Ready to bring your vision to life? Let's talk.</p>
             </div>
 
-            {successMessage && (
-              <div className="success-message">
-                ✓ {successMessage}
-              </div>
-            )}
-
-            {generalError && (
-              <div className="error-message">
-                ✕ {generalError}
-              </div>
-            )}
+            {successMessage && <div className="success-message">✓ {successMessage}</div>}
+            {generalError && <div className="error-message">✕ {generalError}</div>}
 
             <form ref={formRef} onSubmit={handleSubmit} className="form" noValidate>
-              {/* Name Field */}
               <div className="form-group">
                 <label htmlFor="name">Your name*</label>
                 <input
@@ -183,17 +143,10 @@ const ContactForm = () => {
                   placeholder="Enter your full name"
                   className={errors.name ? 'error' : ''}
                   disabled={loading}
-                  aria-label="Name"
-                  aria-describedby={errors.name ? 'name-error' : undefined}
                 />
-                {errors.name && (
-                  <span className="field-error" id="name-error">
-                    {errors.name}
-                  </span>
-                )}
+                {errors.name && <span className="field-error">{errors.name}</span>}
               </div>
 
-              {/* Email Field */}
               <div className="form-group">
                 <label htmlFor="email">Your email*</label>
                 <input
@@ -205,17 +158,10 @@ const ContactForm = () => {
                   placeholder="Enter your email"
                   className={errors.email ? 'error' : ''}
                   disabled={loading}
-                  aria-label="Email"
-                  aria-describedby={errors.email ? 'email-error' : undefined}
                 />
-                {errors.email && (
-                  <span className="field-error" id="email-error">
-                    {errors.email}
-                  </span>
-                )}
+                {errors.email && <span className="field-error">{errors.email}</span>}
               </div>
 
-              {/* Phone Field */}
               <div className="form-group">
                 <label htmlFor="phone">Phone*</label>
                 <input
@@ -227,17 +173,10 @@ const ContactForm = () => {
                   placeholder="Enter your phone number"
                   className={errors.phone ? 'error' : ''}
                   disabled={loading}
-                  aria-label="Phone Number"
-                  aria-describedby={errors.phone ? 'phone-error' : undefined}
                 />
-                {errors.phone && (
-                  <span className="field-error" id="phone-error">
-                    {errors.phone}
-                  </span>
-                )}
+                {errors.phone && <span className="field-error">{errors.phone}</span>}
               </div>
 
-              {/* Message Field */}
               <div className="form-group">
                 <label htmlFor="message">Your message*</label>
                 <textarea
@@ -249,29 +188,18 @@ const ContactForm = () => {
                   rows="5"
                   className={errors.message ? 'error' : ''}
                   disabled={loading}
-                  aria-label="Message"
-                  aria-describedby={errors.message ? 'message-error' : undefined}
                 ></textarea>
-                {errors.message && (
-                  <span className="field-error" id="message-error">
-                    {errors.message}
-                  </span>
-                )}
+                {errors.message && <span className="field-error">{errors.message}</span>}
               </div>
 
-              {/* Submit Button */}
-              <center><button
-                type="submit"
-                className="submit-button"
-                disabled={loading}
-                aria-busy={loading}
-              >
-                {loading ? 'Submitting...' : 'Submit'}
-              </button></center>
+              <center>
+                <button type="submit" className="submit-button" disabled={loading}>
+                  {loading ? 'Submitting...' : 'Submit'}
+                </button>
+              </center>
             </form>
           </div>
 
-          {/* Footer Info */}
           <div className="form-footer">
             <span className="footer-email">veritas@varnanfilms.co.in</span>
             <span className="footer-phone">+91 98726 84567</span>
