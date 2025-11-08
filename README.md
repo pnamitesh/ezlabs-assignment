@@ -42,7 +42,7 @@ You can find the exported Postman collection here:
 ---
 
 ## 🔗 Deployment
-**Live URL:** [https://your-vercel-link.vercel.app](https://your-vercel-link.vercel.app)
+**Live URL:** [https://ezlabs-assignment-one.vercel.app/](https://ezlabs-assignment-one.vercel.app/)
 
 ---
 
